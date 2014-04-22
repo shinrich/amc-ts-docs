@@ -39,3 +39,5 @@ clean:
 	-rm -rf html warn.log
 	-rm -rf $(BUILDDIR)/doctrees $(BUILDDIR)/html $(BUILDDIR)/dirhtml $(BUILDDIR)/singlehtml 
 
+upload:
+	scp -r docbuild/html/* network-geographics.com:/var/www/html/ats/docs

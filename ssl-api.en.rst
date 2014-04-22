@@ -36,8 +36,7 @@ Types
 
    ``TERMINATE``
       The SSL connection will be terminated as soon as possible. This will normally mean simply closing the TCP connection.
-
-  ``TUNNEL``
+   ``TUNNEL``
       No further SSL processing will be done, the connection will be blind tunneled to its destination.
 
 .. c:type:: TSSslObject
@@ -53,7 +52,7 @@ Utility Functions
 
    .. note:: that if ATS is configured to use the SNI information this context may not be used if it is overridden by that configuration.
 
-   .. note: You can force this context by using :c:func:`TSSslContextSet` and passing the context retrieved by this function.
+   .. note:: You can force this context by using :c:func:`TSSslContextSet` and passing the context retrieved by this function.
 
 .. c:function:: bool TSSslContextSet(TSSslVConn svc, void* ssl_ctx)
 
