@@ -17,7 +17,7 @@ The actions that are valid from this callback are
 TS_SSL_CLIENT_SNI_HOOK
 ----------------------
 
-This hook requires a patch to the openSSL library to make it asynchronous. This hook is called if the client provides SNI information in the SSL handshake. If called it will always be called after ``TS_SSL_CLIENT_PRE_HANDSHAKE_HOOK``. Any SNI configuration actions will be performed this hook is invoked which allows the plugin to override that configuration.
+This hook requires a patch to the openSSL library to make it asynchronous. This hook is called if the client provides SNI information in the SSL handshake. If called it will always be called after ``TS_SSL_CLIENT_PRE_HANDSHAKE_HOOK``. Any core SNI configuration actions will be performed before this hook is invoked which allows the plugin to override that configuration.
 
 Types
 -----
@@ -28,7 +28,7 @@ Types
 
 .. c:type:: TSSslVConn
 
-   An SSL connection. It is a subclass of :c:type:`TSVConn` and can be used as one.
+   An SSL connection. It is a subclass of :c:type:`TSVConn` and can be successfully case to that type.
 
 .. c:type:: TSSslVConnOp
 
