@@ -6,7 +6,7 @@ TS_SSL_CLIENT_PRE_HANDSHAKE_HOOK
 
 This is a global hook.
 
-This hook is invoked after the client has connected to ATS and before the SSL handshake is started, i.e., before any bytes have been read from the client. The data for the callback is a TSSslVConn instance which represents the client connection. There is no HTTP transaction as no headers have been read.
+This hook is invoked after the client has connected to ATS and before the SSL handshake is started, i.e., before any bytes have been read from the client. The data for the callback is a :c:type:`TSSslVConn` instance which represents the client connection. There is no HTTP transaction as no headers have been read.
 
 The actions that are valid from this callback are
 
@@ -18,7 +18,7 @@ The actions that are valid from this callback are
 TS_SSL_CLIENT_SNI_HOOK
 ----------------------
 
-This hook requires a patch to the openSSL library to make it asynchronous. This hook is called if the client provides SNI information in the SSL handshake. If called it will always be called after ``TS_SSL_CLIENT_PRE_HANDSHAKE_HOOK``. Any SNI configuration actions will be performed this hook is invoked which allows the plugin to override that configuration.
+This hook requires a patch to the openSSL library to make it asynchronous. This hook is called if the client provides SNI information in the SSL handshake. If called it will always be called after ``TS_SSL_CLIENT_PRE_HANDSHAKE_HOOK``. Any ATS internal SNI configuration actions will be performed before this hook is invoked which allows the plugin to override that configuration.
 
 Types
 -----
@@ -38,11 +38,11 @@ Types
    ``TS_SSL_HOOK_OP_TERMINATE``
       The SSL connection will be terminated as soon as possible. This will normally mean simply closing the TCP connection.
    ``TS_SSL_HOOK_OP_TUNNEL``
-      No further SSL processing will be done, the connection will be blind tunneled to its destination.
+      No further SSL or HTTP processing will be done, the connection will be blind tunneled to its destination.
 
 .. c:type:: TSSslObject
 
-   The SSL (per connection) object.
+   The SSL (per connection) object. This can be cast directly to the openSSL type ``SSL``.
 
 Utility Functions
 -----------------
@@ -53,11 +53,14 @@ Utility Functions
 
    .. note:: that if ATS is configured to use the SNI information this context may not be used if it is overridden by that configuration.
 
-   .. note:: You can force this context by using :c:func:`TSSslContextSet` and passing the context retrieved by this function.
+   .. note:: You can force this context by using :c:func:`TSSslVConnContextSet` and passing the context retrieved by this function.
 
 .. c:function:: bool TSSslVConnContextSet(TSSslVConn svc, void* ssl_ctx)
 
-   Set the SSL context to be used for this conection. This overrides any further configuration, in particular any SNI based configuration. Because this overrides any ATS setup for the context it is the caller's responsibility to set any required or desired values in :arg:`ssl_ctx`.
+   Set the SSL context to be used for this conection. This overrides any ATS configuration based actions. In particular configuration actions based on SNI information (e.g., certificate selection). Because this overrides any ATS setup for the context it is the caller's responsibility to set any required or desired values in :arg:`ssl_ctx`.
+
+   .. note:
+      An SSL context is effectively a global object. The same one may be used for multiple connections and therefore modifying one can have effects on other transactions.
 
 .. c:function:: bool TSSslVConnOpSet(TSSslVConn svc, TSSslVConnOp op)
 
@@ -65,7 +68,7 @@ Utility Functions
 
 .. c:function:: void TSSslVConnReenable(TSSslVConn svc)
 
-   Reenable the SSL connection :arg:`svc`. This must be called if a hook is invoked on the SSL connection.
+   Reenable the SSL connection :arg:`svc`. If a plugin hook is called, ATS processing on that connnection will not resume until this is invoked for that connection.
 
 .. c:function:: TSSslObject TSSslObjectGet(TSSslVConn svc)
 
