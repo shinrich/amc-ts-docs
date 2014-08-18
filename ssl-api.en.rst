@@ -57,7 +57,7 @@ Types
    ``TS_SSL_HOOK_OP_TERMINATE``
       The SSL connection will be terminated as soon as possible. This will normally mean simply closing the TCP connection.
    ``TS_SSL_HOOK_OP_TUNNEL``
-      No further SSL processing will be done, the connection will be blind tunneled to its destination.
+      No further SSL or HTTP processing will be done, the connection will be blind tunneled to its destination.
 
 .. c:type:: TSSslVConnObject
 
@@ -88,7 +88,7 @@ Utility Functions
 
 .. c:function:: void TSSslVConnReenable(TSSslVConn svc)
 
-   Reenable the SSL connection :arg:`svc`. This must be called if a hook is invoked on the SSL connection.
+   Reenable the SSL connection :arg:`svc`. If a plugin hook is called, ATS processing on that connnection will not resume until this is invoked for that connection.
 
 .. c:function:: TSSslVConnObject TSSslVConnObjectGet(TSSslVConn svc)
 
