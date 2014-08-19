@@ -114,7 +114,7 @@ Utility Functions
 
 .. c:function:: TSSslContext TSSslCertFindByName(char *name)
 
-   Look for a SSL context create from the :c:type:`ssl_multicert.config` file.  Use the server name to search.
+   Look for a SSL context created from the :c:type:`ssl_multicert.config` file.  Use the server name to search.
 
 .. c:function:: TSSslContext TSSslCertFindByAddress(struct sockaddr const*)
 
