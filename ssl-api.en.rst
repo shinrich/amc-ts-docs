@@ -4,11 +4,11 @@ SSL API
 Config File Addition
 --------------------
 
-.. c:type:: ssl_multicert.config 
+.. c:type:: ssl_multicert.config
 
-This file contains references to certificate files, addresses and keys.  It is loaded into a table keyed by IP address and host name (possibly wildcarded) at the start of the Traffic Server process.  The table is used to determine the SSL context to use when proxying SSL connections.  
+This file contains references to certificate files, addresses and keys.  It is loaded into a table keyed by IP address and host name (possibly wildcarded) at the start of the Traffic Server process.  The table is used to determine the SSL context to use when proxying SSL connections.
 
-This feature set adds the ``action`` attribute to :c:type:`ssl_multicert.config`.  If ``action`` is set to ``tunnel1``, the connection that matches that line will blind tunnel the SSL connection rather than proxying it.  The `default ssl_multicert.config <https://github.com/shinrich/trafficserver/blob/ts-3006/proxy/config/ssl_multicert.config.default>`_ has been updated to show an example of the ``action`` attribute.
+This feature set adds the ``action`` attribute to :c:type:`ssl_multicert.config`.  If ``action`` is set to ``tunnel``, the connection that matches that line will blind tunnel the SSL connection rather than proxying it.  The `default ssl_multicert.config <https://github.com/shinrich/trafficserver/blob/ts-3006/proxy/config/ssl_multicert.config.default>`_ has been updated to show an example of the ``action`` attribute.
 
 SSL Hooks
 ---------
@@ -40,7 +40,7 @@ The following action is valid from this hook.
 
 * Get the client specified server name - :c:func:`TSSslVConnServernameGet`
 
-The Traffic Server core first executes logic in the SNI callback to store the servername in the TSSslVConn object and  to evaluate the settings in the 
+The Traffic Server core first executes logic in the SNI callback to store the servername in the TSSslVConn object and  to evaluate the settings in the
 :c:type:`ssl_multicert.config` file based on the server name.  Then the core SNI
 callback executes the plugin registered SNI callback code.  The plugin callback can access the servername by calling :c:func:`TSSslVConnServernameGet`.
 
@@ -73,7 +73,7 @@ Types
 
 .. c:type:: TSSslVConnObject
 
-   The SSL (per connection) object.  This is an opaque type that can be cast to the appropriate type (SSL * for the openSSL library).  
+   The SSL (per connection) object.  This is an opaque type that can be cast to the appropriate type (SSL * for the openSSL library).
 
 .. c:type:: TSSslContext
 
@@ -112,11 +112,11 @@ Utility Functions
 
 .. c:function:: TSSslContext TSSslCertFindByName(TSSslVConn svc, char *name)
 
-   Look for a SSL context create from the :c:type`ssl_multicert.config` file.  Use the server name to search.
+   Look for a SSL context create from the :c:type:`ssl_multicert.config` file.  Use the server name to search.
 
 .. c:function:: TSSslContext TSSslCertFindByAddress(TSSslVConn svc, struct sockaddr const*)
 
-   Look for a SSL context create from the :c:type:`ssl_multicert.config` file.  Use the server address to search.
+   Look for a SSL context created from the :c:type:`ssl_multicert.config` file.  Use the server address to search.
 
 Example Uses
 ------------
