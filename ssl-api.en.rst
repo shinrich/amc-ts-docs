@@ -66,6 +66,8 @@ Types
 
    An enumeration specifying the various operations that can be done for an SSL connection.
 
+   ``TS_SSL_HOOK_OP_DEFAULT``
+      The default hook operation.  Process the SSL connection and enclosed HTTP data as normal.
    ``TS_SSL_HOOK_OP_TERMINATE``
       The SSL connection will be terminated as soon as possible. This will normally mean simply closing the TCP connection.
    ``TS_SSL_HOOK_OP_TUNNEL``
@@ -110,11 +112,11 @@ Utility Functions
 
    Get the name of the server as specified by the client via the SNI extensions.  If no server name is specified, NULL is returned.
 
-.. c:function:: TSSslContext TSSslCertFindByName(TSSslVConn svc, char *name)
+.. c:function:: TSSslContext TSSslCertFindByName(char *name)
 
    Look for a SSL context create from the :c:type:`ssl_multicert.config` file.  Use the server name to search.
 
-.. c:function:: TSSslContext TSSslCertFindByAddress(TSSslVConn svc, struct sockaddr const*)
+.. c:function:: TSSslContext TSSslCertFindByAddress(struct sockaddr const*)
 
    Look for a SSL context created from the :c:type:`ssl_multicert.config` file.  Use the server address to search.
 
