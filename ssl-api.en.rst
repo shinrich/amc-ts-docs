@@ -37,13 +37,13 @@ In theory this hook could apply and be useful for non-SSL connections as well, b
 
 .. c:type:: TS_SSL_SNI_HOOK
 
-This hook is called if the client provides SNI information in the SSL handshake. If called it will always be called after ``TS_SSL_CLIENT_PRE_HANDSHAKE_HOOK``.
+This hook is called if the client provides SNI information in the SSL handshake. If called it will always be called after ``TS_VCONN_PRE_ACCEPT_HOOK``.
 
-The Traffic Server core first executes logic in the SNI callback to store the servername in the TSVConn object and  to evaluate the settings in the
+The Traffic Server core first evaluates the settings in the
 :c:type:`ssl_multicert.config` file based on the server name.  Then the core SNI
 callback executes the plugin registered SNI callback code.  The plugin callback can access the servername by calling the openssl function :c:func:`SSL_get_servername`.
 
-If server running Traffic server has the appropriate openSSL patch installed, the SNI callback can return ``SSL_TLSEXT_ERR_READ_AGAIN`` to stop the SSL handshake processing.  This results in ``SSL_accept`` returning ``SSL_ERROR_WANT_SNI_RESOLVE`` before completing the SSL handshake (only the client hello message will have been received).  Additional processing could reenable the virtual connection causing the ``SSL_accept`` to be called again to complete the handshake exchange.  In the case of a blind tunnel conversion, the SSL handshake will never be completed by Traffic Server.
+If the server running Traffic Server has the appropriate openSSL patch installed, the SNI callback can return ``SSL_TLSEXT_ERR_READ_AGAIN`` to stop the SSL handshake processing.  This results in ``SSL_accept`` returning ``SSL_ERROR_WANT_SNI_RESOLVE`` before completing the SSL handshake (only the client hello message will have been received).  Additional processing could reenable the virtual connection causing the ``SSL_accept`` to be called again to complete the handshake exchange.  In the case of a blind tunnel conversion, the SSL handshake will never be completed by Traffic Server.
 
 The plugin callbacks can halt the SSL handshake processing by not reenabling the connection (i.e., by not calling :c:func:`TSSslVConnReenable`).  If a plugin SNI callback does not reenable the connection, the global callback will return ``SSL_TLSEXT_ERR_READ_AGAIN``.
 
@@ -99,7 +99,7 @@ Utility Functions
 
    Reenable the SSL connection :arg:`svc`. If a plugin hook is called, ATS processing on that connnection will not resume until this is invoked for that connection.
 
-.. c:function:: TSSslVConnection TSVConnSslConnectiontGet(TSVConn svc)
+.. c:function:: TSSslVConnection TSVConnSslConnectionGet(TSVConn svc)
 
    Get the SSL (per connection) object from the SSl connection :arg:`svc`.
 
@@ -120,7 +120,7 @@ Example Uses
 
 Three examples have been added to the code base illustrating how these additions can be used.  One project has also been added to plugins/experimental.
 
-Example one is `ssl-preaccept <https://github.com/shinrich/trafficserver/blob/ts-3006/example/ssl-preaccept/ssl-preaccept.cc>`_ which uses the new :c:type:`TS_SSL_CLIENT_PRE_HANDSHAKE_HOOK` to implement a blind tunnel if the client IP address matches one of the ranges in the config file.  Function ``CB_Pre_Accept`` contains the interesting bits.
+Example one is `ssl-preaccept <https://github.com/shinrich/trafficserver/blob/ts-3006/example/ssl-preaccept/ssl-preaccept.cc>`_ which uses the new :c:type:`TS_VCONN_PRE_ACCEPT_HOOK` to implement a blind tunnel if the client IP address matches one of the ranges in the config file.  Function ``CB_Pre_Accept`` contains the interesting bits.
 
 Example two, `ssl-sni-whitelist <https://github.com/shinrich/trafficserver/blob/ts-3006/example/ssl-sni-whitelist/ssl-sni-whitelist.cc>`_,  uses the SNI callback.  It takes the servername and destination address to lookup SSL context information loaded from the :c:type:`ssl_multicert.config` file.  If no SSL context can be found, the callback sets the connection to use blind tunnelling.  The information in the :c:type:`ssl_multicert.config` file whitelists the SSL sites to be proxied. Function ``CB_servername_whitelist`` is the callback function.
 
