@@ -118,10 +118,12 @@ Utility Functions
 Example Uses
 ------------
 
-Three examples have been added to the code base illustrating how these additions can be used.
+Three examples have been added to the code base illustrating how these additions can be used.  One project has also been added to plugins/experimental.
 
 Example one is `ssl-preaccept <https://github.com/shinrich/trafficserver/blob/ts-3006/example/ssl-preaccept/ssl-preaccept.cc>`_ which uses the new :c:type:`TS_SSL_CLIENT_PRE_HANDSHAKE_HOOK` to implement a blind tunnel if the client IP address matches one of the ranges in the config file.  Function ``CB_Pre_Accept`` contains the interesting bits.
 
 Example two, `ssl-sni-whitelist <https://github.com/shinrich/trafficserver/blob/ts-3006/example/ssl-sni-whitelist/ssl-sni-whitelist.cc>`_,  uses the SNI callback.  It takes the servername and destination address to lookup SSL context information loaded from the :c:type:`ssl_multicert.config` file.  If no SSL context can be found, the callback sets the connection to use blind tunnelling.  The information in the :c:type:`ssl_multicert.config` file whitelists the SSL sites to be proxied. Function ``CB_servername_whitelist`` is the callback function.
 
 Example three is `ssl-sni <https://github.com/shinrich/trafficserver/blob/ts-3006/example/ssl-sni/ssl-sni.cc>`_. This example is not a useful real world scenario but a test that exercises the new functions added in this feature addition.  This example installs a SNI callback (``CB_servername``).  The callback tests if the servername ends in ``facebook.com``.  If it does, the callback sets up a blind tunnel.  Otherwise, if the servername is ``www.yahoo.com``, the callback looks up the SSL context loaded for ``safelyfiled.com`` and sets that context for the connection.
+
+The experimental project is a `dynamic certificate loader <https://github.com/shinrich/trafficserver/tree/ts-3006/plugins/experimental/ssl_cert_loader>`_.  This project reads a config file and builds two lookup structures: one keyed on IP address and the other keyed on host name.  If the IP address or hostname is specified the loading of the certificate is deferred until the first use.  If the hostname is only in the certificate file, the certificate will be loaded on process initialization.  The project uses both the SNI and the pre accept callbacks.
