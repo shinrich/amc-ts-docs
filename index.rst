@@ -11,5 +11,7 @@ This document contains design document by "amc" (Alan M. Carroll) for Apache Tra
    :maxdepth: 1
 
    ssl-api.en
+   ssl-session-api.en
+   ssl-context-api.en
    partial-object-caching.en
    spdy.en
